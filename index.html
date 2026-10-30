@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Karbn website prototype</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&family=Krona+One&display=swap">
+<style>
+/* Layout: sticky zwarte nav, brede witte secties met grijze foto-vlakken, rood alleen voor acties.
+   Brandbook: wit, #D9D9D9, zwart, accent #CC0000, #74CC00. Horizon -> Krona One, Glacial Indifference -> Josefin Sans (tijdelijk, licentie controleren). */
+:root {
+  --white: #ffffff;
+  --grey: #d9d9d9;
+  --grey-soft: #f2f2f2;
+  --black: #000000;
+  --red: #cc0000;
+  --green: #74cc00;
+  --head: "Krona One", "Arial Black", Arial, sans-serif;
+  --body: "Josefin Sans", "Helvetica Neue", Arial, sans-serif;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--white); color: var(--black);
+  font-family: var(--body); font-size: 18px; line-height: 1.55;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: var(--black); z-index: 60; }
+h1, h2, h3 { font-family: var(--head); font-weight: 400; line-height: 1.15; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(2rem, 6vw, 3.9rem); }
+h2 { font-size: clamp(1.45rem, 3.6vw, 2.2rem); }
+h3 { font-size: 1.05rem; }
+p { margin: 0; max-width: 62ch; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
+
+/* Banner */
+.proto { background: var(--green); color: var(--black); font-size: 14px; font-weight: 600; letter-spacing: .02em; }
+.proto .wrap { padding-block: 8px; }
+
+/* Nav */
+header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: var(--black); color: var(--white); }
+header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; padding-block: 12px; }
+.logo { font-family: var(--head); font-size: 1.35rem; letter-spacing: .06em; text-decoration: none; }
+.logo span { color: var(--red); }
+nav { display: flex; gap: 4px 22px; flex-wrap: wrap; }
+nav a { text-decoration: none; font-weight: 600; font-size: 16px; padding: 4px 0; border-bottom: 2px solid transparent; }
+nav a:hover { border-color: var(--grey); }
+nav a[aria-current="page"] { border-color: var(--red); }
+
+/* Buttons */
+.btn { display: inline-block; font-family: var(--body); font-weight: 600; font-size: 17px; text-decoration: none; padding: 13px 26px; border: 2px solid var(--black); background: var(--black); color: var(--white); cursor: pointer; }
+.btn:hover { background: var(--red); border-color: var(--red); }
+.btn.ghost { background: transparent; color: var(--black); }
+.btn.ghost:hover { background: var(--black); color: var(--white); border-color: var(--black); }
+.btn[disabled] { background: var(--grey); border-color: var(--grey); color: #444; cursor: not-allowed; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* Foto-placeholder */
+.ph { background: var(--grey); color: #333; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; padding: 16px; width: 100%; max-width: 100%; }
+.ph b { font-family: var(--head); font-weight: 400; font-size: .9rem; letter-spacing: .06em; text-transform: uppercase; }
+.ph small { font-size: 14px; max-width: 30ch; }
+.vid { position: relative; background: var(--grey); display: flex; align-items: center; justify-content: center; overflow: hidden; width: 100%; max-width: 100%; perspective: 800px; }
+.vid .spin { width: 34%; animation: turn 6s linear infinite; }
+.vid svg { width: 100%; height: auto; display: block; }
+.vid video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vtag { position: absolute; left: 12px; bottom: 12px; background: var(--black); color: var(--white); font-size: 13px; font-weight: 600; padding: 4px 10px; }
+@keyframes turn { to { transform: rotateY(360deg); } }
+@media (prefers-reduced-motion: reduce) { .vid .spin { animation: none; } }
+.r-43 { aspect-ratio: 4 / 3; } .r-32 { aspect-ratio: 3 / 2; } .r-11 { aspect-ratio: 1 / 1; } .r-45 { aspect-ratio: 4 / 5; }
+
+/* Placeholder-tekst */
+.todo { background: #fff3a8; padding: 0 5px; font-weight: 600; font-size: .92em; }
+
+/* Secties */
+section.band { padding-block: clamp(40px, 7vw, 88px); }
+.band.dark { background: var(--black); color: var(--white); }
+.band.soft { background: var(--grey-soft); }
+.eyebrow { font-size: 14px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 14px; }
+.band.dark .eyebrow { color: var(--green); }
+.eyebrow.red { color: var(--red); }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 5vw, 64px); align-items: center; }
+.split > * { min-width: 0; }
+.stack { display: flex; flex-direction: column; gap: 20px; }
+.hero h1 { max-width: 14ch; }
+.lead { font-size: 1.15rem; }
+.quote { font-family: var(--head); font-size: clamp(1.3rem, 3.4vw, 2.1rem); line-height: 1.3; max-width: 26ch; }
+.quote small { display: block; margin-top: 16px; font-family: var(--body); font-size: 15px; color: var(--grey); letter-spacing: .04em; }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 32px; }
+.step { border-top: 4px solid var(--black); padding-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+.step .tag { font-size: 14px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--red); }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 32px; }
+.cards > * { min-width: 0; }
+.list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.list li { padding-left: 28px; position: relative; }
+.list li::before { content: ""; position: absolute; left: 0; top: .6em; width: 14px; height: 4px; background: var(--red); }
+table { border-collapse: collapse; width: 100%; font-size: 16px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--grey); vertical-align: top; }
+th { font-family: var(--head); font-weight: 400; font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; }
+.scroll { overflow-x: auto; }
+.price { font-family: var(--head); font-size: 1.6rem; }
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.field label { font-weight: 600; font-size: 15px; }
+.field input, .field textarea { font: inherit; padding: 12px; border: 2px solid var(--black); border-radius: 0; background: var(--white); color: var(--black); width: 100%; }
+
+/* Footer */
+footer { background: var(--black); color: var(--white); padding-block: 40px; font-size: 16px; }
+footer .wrap { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 28px; }
+footer .wrap > * { min-width: 0; }
+footer h3 { margin-bottom: 10px; color: var(--green); font-size: .85rem; letter-spacing: .1em; text-transform: uppercase; }
+footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+footer a { text-decoration: none; border-bottom: 1px solid #555; }
+footer .tagline { font-family: var(--head); font-size: 1.05rem; margin-top: 10px; max-width: 24ch; }
+
+/* Menu in het midden, zoals de productpagina's van Apple */
+header .wrap { justify-content: center; gap: 10px 40px; }
+/* Home: grote titel, twee knoppen en daaronder de productvideo */
+.apphero { background: #fff; text-align: center; padding-top: clamp(32px, 6vw, 64px); overflow: hidden; }
+.apphero h1 { font-size: clamp(2.8rem, 9vw, 5.4rem); letter-spacing: -.01em; max-width: none; }
+.apphero .sub { font-size: clamp(1.25rem, 3.6vw, 2.1rem); color: var(--red); font-weight: 600; margin: 10px auto 0; max-width: none; }
+.apphero .avail { color: #555; font-size: clamp(1.05rem, 2.4vw, 1.3rem); margin: 10px auto 0; max-width: none; }
+.pills { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 26px; }
+.pill { border-radius: 999px; padding: 12px 30px; font-size: 1.15rem; font-weight: 600; text-decoration: none; border: 2px solid var(--red); }
+.pill.fill { background: var(--red); color: #fff; }
+.pill.fill:hover { background: #a00000; border-color: #a00000; }
+.pill.out { color: var(--red); background: transparent; }
+.pill.out:hover { background: var(--red); color: #fff; }
+.apphero video { display: block; width: 100%; max-width: 1100px; margin: 12px auto 0; aspect-ratio: 16 / 9; object-fit: cover; background: #fff; }
+@media (max-width: 760px) { .apphero video { aspect-ratio: 4 / 3; } }
+body[data-view="home"] .proto:not(#start) { display: none; }
+body:not([data-view="home"]) .apphero, body:not([data-view="home"]) #start { display: none; }
+/* Meer diepte en sfeer */
+:root { --olive: #787b50; --olive-soft: #f2f3e8; --shadow: 0 1px 2px rgba(0,0,0,.05), 0 14px 36px rgba(40,45,20,.10); }
+header { background: rgba(0,0,0,.86); -webkit-backdrop-filter: saturate(160%) blur(14px); backdrop-filter: saturate(160%) blur(14px); }
+.apphero { background: radial-gradient(ellipse 75% 50% at 50% 80%, #dfe2cb 0%, #f1f2e6 45%, #ffffff 78%); padding-top: clamp(48px, 9vw, 104px); }
+.apphero h1 { font-size: clamp(3.4rem, 12vw, 7.2rem); line-height: 1; }
+.apphero video { mix-blend-mode: multiply; background: transparent; }
+.pill { box-shadow: 0 6px 18px rgba(204,0,0,.22); }
+.pill.out { box-shadow: none; }
+.btn { border-radius: 999px; }
+.band.soft { background: var(--olive-soft); }
+.band.dark { background: radial-gradient(circle at 82% 18%, #30331f 0%, #0b0b08 58%, #000 100%); }
+.band h2 { font-size: clamp(1.7rem, 4.4vw, 2.8rem); }
+.ph { border-radius: 28px; background: linear-gradient(145deg, #e6e7d8, #cdd0ba); color: #4a4c36; box-shadow: inset 0 0 0 1px rgba(0,0,0,.04); }
+.step { background: var(--olive-soft); border: 0; border-radius: 28px; padding: 30px; box-shadow: none; }
+.band.soft .step, .band.soft .cards > .stack { background: #fff; box-shadow: var(--shadow); }
+.cards > .stack { border-radius: 28px; padding: 30px; background: var(--olive-soft); }
+.step .tag { color: var(--olive); }
+.step h3, .cards h3 { font-size: 1.2rem; }
+.quote { font-size: clamp(1.6rem, 4.6vw, 2.9rem); max-width: 22ch; }
+.eyebrow { display: inline-block; }
+th, td { border-bottom-color: #e3e4d8; }
+.scroll { border-radius: 20px; background: #fff; box-shadow: var(--shadow); padding: 8px 16px; }
+.field input, .field textarea { border-radius: 14px; border-width: 1.5px; }
+footer { background: #0b0b08; }
+@media (prefers-reduced-motion: no-preference) {
+  .step, .cards > .stack { transition: transform .2s ease, box-shadow .2s ease; }
+  .step:hover, .cards > .stack:hover { transform: translateY(-4px); }
+  .pill { transition: background .15s, color .15s, transform .15s; }
+  .pill:hover { transform: translateY(-1px); }
+}
+/* Home: titel, tekst, knoppen en video vullen precies het eerste scherm */
+.apphero { height: calc(100vh - var(--hh, 58px)); height: calc(100svh - var(--hh, 58px)); min-height: 480px; display: flex; flex-direction: column; padding-top: clamp(14px, 4vh, 44px); }
+.apphero .wrap { flex: none; }
+.apphero h1 { font-size: clamp(2.4rem, min(11vw, 10vh), 6rem); }
+.apphero .sub { font-size: clamp(1.05rem, min(3.6vw, 3.4vh), 1.9rem); margin-top: 6px; }
+.apphero .avail { font-size: clamp(.95rem, min(2.8vw, 2.4vh), 1.2rem); margin-top: 6px; }
+.pills { margin-top: clamp(10px, 2.4vh, 22px); }
+.pill { padding: 9px 26px; font-size: clamp(1rem, 2.6vh, 1.15rem); }
+.apphero video { flex: 1 1 0; min-height: 0; width: 100%; max-width: 1200px; margin: 0 auto; aspect-ratio: auto; object-fit: contain; }
+@media (max-width: 760px) { .apphero video { aspect-ratio: auto; object-fit: cover; } }
+/* Links en knoppen worden groter bij aanwijzen */
+nav a, .logo, footer a, .list a, .pill, .btn { display: inline-block; transform-origin: center; }
+nav a:hover, .logo:hover, footer a:hover, .list a:hover, .pill:hover, .btn:hover { transform: scale(1.12); }
+@media (prefers-reduced-motion: no-preference) {
+  nav a, .logo, footer a, .list a, .pill, .btn { transition: transform .18s ease, background .15s, color .15s, border-color .15s; }
+}
+/* Footer met groot, vervaagd logo dat langzaam beweegt */
+footer { position: relative; overflow: hidden; padding-bottom: 0; }
+footer .wrap { position: relative; z-index: 2; }
+.bigmark { position: relative; z-index: 1; font-family: var(--head); font-size: clamp(3.2rem, 17.5vw, 22rem); line-height: .82; letter-spacing: .02em; text-align: center; white-space: nowrap; margin-top: clamp(24px, 6vw, 72px); margin-bottom: -.12em; user-select: none; pointer-events: none;
+  background: linear-gradient(100deg, rgba(255,255,255,.05) 25%, rgba(255,255,255,.20) 50%, rgba(255,255,255,.05) 75%); background-size: 260% 100%; background-position: 0 0;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+  -webkit-mask-image: linear-gradient(to bottom, #000 35%, transparent 100%); mask-image: linear-gradient(to bottom, #000 35%, transparent 100%); }
+.bigmark span { -webkit-text-fill-color: rgba(204,0,0,.20); color: rgba(204,0,0,.20); }
+@media (prefers-reduced-motion: no-preference) {
+  .bigmark { animation: sweep 9s ease-in-out infinite alternate, drift 14s ease-in-out infinite alternate; }
+  @keyframes sweep { to { background-position: 100% 0; } }
+  @keyframes drift { from { transform: translateX(-1.5%); } to { transform: translateX(1.5%); } }
+}
+.pic { margin: 0; position: relative; width: 100%; max-width: 100%; border-radius: 28px; overflow: hidden; background: #e6e7d8; }
+.pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pic figcaption { position: absolute; left: 12px; bottom: 12px; background: rgba(0,0,0,.72); color: #fff; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
+.pic.sm figcaption { display: none; }
+/* Scroll-ontwerp: lopende tekstband en een zakje dat meedraait met het scrollen */
+.marquee { overflow: hidden; background: #000; color: #fff; padding: 16px 0; white-space: nowrap; }
+.marquee .track { display: inline-flex; width: max-content; }
+.marquee span { font-family: var(--head); font-size: clamp(1.4rem, 4vw, 2.6rem); padding: 0 32px; }
+.marquee span:nth-child(even) { color: var(--red); }
+@media (prefers-reduced-motion: no-preference) { .marquee .track { animation: mq 30s linear infinite; } @keyframes mq { to { transform: translateX(-50%); } } }
+.pinwrap { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 6vw, 80px); align-items: start; }
+.pinwrap > * { min-width: 0; }
+.pinstick { position: sticky; top: calc(var(--hh, 58px) + 12px); height: calc(100svh - var(--hh, 58px) - 24px); display: flex; align-items: center; }
+.pinstick video { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+.pintitle { min-height: 55svh; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+.pstep { min-height: 65svh; display: flex; flex-direction: column; justify-content: center; gap: 12px; opacity: .35; transition: opacity .3s ease; }
+.pstep.on { opacity: 1; }
+.pstep h3 { font-size: clamp(1.4rem, 3.4vw, 2.2rem); }
+.pstep .tag { font-size: 14px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--red); }
+@media (max-width: 760px) {
+  .pinwrap { grid-template-columns: 1fr; gap: 0; }
+  .pinstick { height: 36svh; z-index: 1; background: #fff; box-shadow: 0 18px 22px -8px #fff, 0 1px 0 #ecece3; }
+  .pinsteps { padding-bottom: 8svh; }
+  .pintitle { min-height: 46svh; }
+  .pstep { min-height: calc(100svh - var(--hh, 58px) - 36svh - 24px); padding-block: 14px; justify-content: center; }
+  .pstep h3 { font-size: 1.35rem; }
+  .pstep p { font-size: 1rem; }
+}
+/* Zachtere overgang: hero loopt uit in wit, tekstband als omlijnde letters, prototype-melding als klein label */
+.apphero { position: relative; }
+.apphero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 14%; background: linear-gradient(to bottom, rgba(255,255,255,0), #fff); pointer-events: none; }
+.marquee { background: #fff; color: transparent; padding: 6px 0 22px; }
+.marquee span { font-size: clamp(2.6rem, 9vw, 6.5rem); line-height: 1.1; color: transparent; -webkit-text-stroke: 1.5px #c3c6ab; }
+.marquee span:nth-child(even) { color: transparent; -webkit-text-stroke-color: rgba(204,0,0,.55); }
+#start { position: fixed; right: max(14px, env(safe-area-inset-right, 0px)); bottom: max(14px, env(safe-area-inset-bottom, 0px)); z-index: 45; max-width: min(340px, calc(100vw - 28px)); border-radius: 18px; box-shadow: 0 6px 20px rgba(0,0,0,.18); font-size: 12px; line-height: 1.35; }
+#start .wrap { padding: 8px 14px; }
+.pinstick svg { width: 100%; height: 100%; display: block; }
+[data-page] { display: none; }
+[data-page].on { display: block; }
+
+@media (max-width: 760px) {
+  body { font-size: 17px; }
+  .split, .steps, .cards, footer .wrap { grid-template-columns: 1fr; }
+  .split.flip > :first-child { order: 2; }
+}
+@media (prefers-reduced-motion: no-preference) { .btn { transition: background .15s, color .15s; } }
+html, body { cursor: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2220%22%20height=%2246%22%20viewBox=%22-6%20-2%20112%20232%22%3E%3Cpath%20d=%22M50%205%20C70%205%2080%2025%2078%2055%20C77%2080%2070%20100%2072%20125%20C74%20150%2070%20195%2048%20195%20C28%20195%2024%20170%2028%20145%20C31%20120%2024%20100%2022%2070%20C20%2035%2032%205%2050%205%20Z%22%20fill=%22%23787b50%22%20stroke=%22%23fff%22%20stroke-width=%227%22/%3E%3Crect%20x=%2244%22%20y=%22190%22%20width=%2213%22%20height=%2232%22%20rx=%222%22%20fill=%22%230c0c0c%22%20stroke=%22%23fff%22%20stroke-width=%224%22/%3E%3Crect%20x=%2247%22%20y=%22209%22%20width=%227%22%20height=%223%22%20fill=%22%23cc0000%22/%3E%3C/svg%3E") 10 3, auto; }
+a, button, .btn, .pill, summary, label, [role="button"] { cursor: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2220%22%20height=%2246%22%20viewBox=%22-6%20-2%20112%20232%22%3E%3Cpath%20d=%22M50%205%20C70%205%2080%2025%2078%2055%20C77%2080%2070%20100%2072%20125%20C74%20150%2070%20195%2048%20195%20C28%20195%2024%20170%2028%20145%20C31%20120%2024%20100%2022%2070%20C20%2035%2032%205%2050%205%20Z%22%20fill=%22%23787b50%22%20stroke=%22%23fff%22%20stroke-width=%227%22/%3E%3Crect%20x=%2244%22%20y=%22190%22%20width=%2213%22%20height=%2232%22%20rx=%222%22%20fill=%22%230c0c0c%22%20stroke=%22%23fff%22%20stroke-width=%224%22/%3E%3Crect%20x=%2247%22%20y=%22209%22%20width=%227%22%20height=%223%22%20fill=%22%23cc0000%22/%3E%3C/svg%3E") 10 3, pointer; }
+.btn, .pill { width: fit-content; max-width: 100%; white-space: nowrap; align-self: flex-start; flex: 0 0 auto; }
+.pills .pill { align-self: auto; }
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+
+/* --- diepte en ritme --- */
+html.rvon .rv { opacity: 0; transform: translateY(34px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
+html.rvon .rv.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { html.rvon .rv { opacity: 1; transform: none; transition: none; } }
+.megah { font-family: var(--head); font-size: clamp(2.6rem, 9.5vw, 8rem); line-height: .95; letter-spacing: -.02em; text-transform: uppercase; }
+.megah .o { color: transparent; -webkit-text-stroke: 2px var(--black); }
+.band.dark .megah .o { -webkit-text-stroke-color: #fff; }
+.facts { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 2px solid var(--black); }
+.facts > div { padding: 28px 22px 34px 0; border-right: 1px solid #d5d6c8; padding-left: 22px; }
+.facts > div:first-child { padding-left: 0; } .facts > div:last-child { border-right: 0; }
+.facts b { display: block; font-family: var(--head); font-size: clamp(1.4rem, 3.2vw, 2.4rem); text-transform: uppercase; letter-spacing: -.01em; }
+.facts span { display: block; margin-top: 8px; font-size: 15px; }
+.facts i { display: block; font-style: normal; font-size: 13px; color: var(--red); font-weight: 700; letter-spacing: .14em; margin-bottom: 18px; }
+.sticky { position: sticky; top: 96px; align-self: start; }
+.bento { display: grid; grid-template-columns: 1.3fr 1fr; grid-auto-rows: minmax(190px, auto); gap: 18px; margin-top: 34px; }
+.bento > div { border-radius: 28px; padding: 30px; background: var(--olive-soft); display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; min-width: 0; }
+.bento > div:nth-child(1) { grid-row: span 2; background: radial-gradient(circle at 70% 20%, #4a4d2f, #1b1c11 70%); color: #fff; }
+.bento > div:nth-child(4) { background: var(--red); color: #fff; }
+.bento h3 { font-size: clamp(1.2rem, 2.4vw, 1.8rem); }
+.bento .big { font-family: var(--head); font-size: clamp(3rem, 8vw, 6.5rem); line-height: .9; }
+details.q { border-top: 2px solid var(--black); padding: 22px 0; }
+details.q:last-of-type { border-bottom: 2px solid var(--black); }
+details.q summary { list-style: none; display: flex; justify-content: space-between; gap: 20px; font-family: var(--head); font-size: clamp(1.1rem, 2.4vw, 1.6rem); }
+details.q summary::-webkit-details-marker { display: none; }
+details.q summary::after { content: "+"; color: var(--red); font-size: 1.6em; line-height: .8; transition: transform .25s; }
+details.q[open] summary::after { transform: rotate(45deg); }
+details.q p { margin-top: 14px; max-width: 60ch; }
+.cta { text-align: center; }
+.cta .megah { margin-bottom: 26px; }
+.cta .row { justify-content: center; }
+.cta .btn { align-self: center; background: var(--red); border-color: var(--red); font-size: 1.15rem; padding: 16px 38px; }
+.stripe { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 18px; margin-top: 34px; }
+.stripe .pic { height: 100%; } .stripe .pic img { min-height: 260px; }
+.bigq { font-family: var(--head); font-size: clamp(1.6rem, 4.6vw, 3.6rem); line-height: 1.12; letter-spacing: -.01em; max-width: 22ch; }
+.bigq em { font-style: normal; color: var(--red); }
+.formcard { background: #fff; color: var(--black); border-radius: 32px; padding: clamp(22px, 4vw, 44px); box-shadow: 0 30px 80px rgba(0,0,0,.35); }
+.mail { font-family: var(--head); font-size: clamp(1.2rem, 3vw, 2rem); }
+@media (max-width: 800px) { .facts { grid-template-columns: 1fr 1fr; } .facts > div { border-right: 0; padding-left: 0; border-bottom: 1px solid #d5d6c8; } .bento, .stripe { grid-template-columns: 1fr; } .bento > div:nth-child(1) { grid-row: auto; min-height: 260px; } .sticky { position: static; } }
+
+@media (max-width: 800px) {
+  .facts b { font-size: 1.05rem; overflow-wrap: anywhere; hyphens: auto; }
+  .facts > div { padding-right: 8px; }
+  .facts span { font-size: 14px; }
+  .megah { overflow-wrap: break-word; }
+  .band h2.megah { font-size: clamp(1.7rem, 8.5vw, 2.6rem) !important; }
+  h1.megah { font-size: clamp(2rem, 10vw, 3rem) !important; }
+  .cta .megah { font-size: clamp(2rem, 10vw, 3rem) !important; }
+  .stripe .pic.r-11 { aspect-ratio: 16 / 10; }
+  .stripe .pic.r-11 img { min-height: 0; }
+  .bigq { max-width: none; }
+  #start { left: auto; right: 10px; bottom: 10px; max-width: calc(100vw - 20px); border-radius: 16px; cursor: pointer; }
+  #start .wrap { padding: 8px 12px; font-size: 12px; line-height: 1.35; }
+  #start:not(.open) { max-width: none; border-radius: 999px; opacity: .92; }
+  #start:not(.open) .wrap { font-size: 0; padding: 6px 12px; }
+  #start:not(.open) .wrap::before { content: "Prototype \24D8"; font-size: 12px; font-weight: 700; }
+  details.q p { max-width: none; }
+  .formcard { border-radius: 24px; }
+  .btn, .pill { white-space: normal; }
+  nav a:hover, .logo:hover, footer a:hover, .pill:hover, .btn:hover { transform: none; }
+}
+@media (hover: none) { nav a:hover, .logo:hover, footer a:hover, .list a:hover, .pill:hover, .btn:hover { transform: none; } }
+.langsw { display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; }
+.langsw button { font: inherit; font-weight: 700; font-size: 15px; letter-spacing: .06em; color: rgba(255,255,255,.6); background: none; border: 0; border-bottom: 3px solid transparent; padding: 2px 1px; cursor: pointer; }
+.langsw button:hover { color: #fff; }
+.langsw button[aria-pressed="true"] { color: #fff; border-bottom-color: var(--red); }
+.langsw .sep { color: rgba(255,255,255,.3); }
+</style>
+</head>
+<body>
+
+
+<div class="proto"><div class="wrap">Prototype voor het team en de docent. Foto's, prijs en bestelknop volgen. Geel gemarkeerde tekst moet nog worden ingevuld.</div></div>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="#home" aria-label="Karbn, naar home">KARB<span>N</span></a>
+    <nav aria-label="Hoofdmenu">
+      <a href="#home" data-nav="home">Home</a>
+      <a href="#product" data-nav="product">Product</a>
+      <a href="#over" data-nav="over">Over Karbn</a>
+      <a href="#contact" data-nav="contact">Contact</a>
+      <span class="langsw" role="group" aria-label="Taal / Language"><button type="button" data-lang="nl" aria-pressed="true">NL</button><span class="sep" aria-hidden="true">|</span><button type="button" data-lang="en" aria-pressed="false">EN</button></span>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- HOME -->
+<div data-page="home">
+  <section class="apphero" aria-label="Karbn">
+    <div class="wrap">
+      <h1>Karbn</h1>
+      <p class="sub">Built to perform. Made to last fresh.</p>
+      <p class="avail">Pre-order vanaf <span class="todo">datum invullen</span></p>
+      <div class="pills">
+        <a class="pill fill" href="#over">Learn more</a>
+        <a class="pill out" href="#product">Pre-order</a>
+      </div>
+    </div>
+    <video id="spin" src="karbn-draai.mp4" poster="karbn-poster.jpg" autoplay muted loop playsinline webkit-playsinline disablepictureinpicture disableremoteplayback controlslist="nodownload nofullscreen noremoteplayback" preload="auto" aria-label="Het Karbn-zakje draait rond"></video>
+  </section>
+  <div class="proto" id="start"><div class="wrap">Prototype voor het team en de docent. Foto's, prijs en bestelknop volgen. Geel gemarkeerde tekst moet nog worden ingevuld.</div></div>
+  <div class="marquee" aria-hidden="true"><div class="track"><span>Built to perform.</span><span>Made to last fresh.</span><span>Built to perform.</span><span>Made to last fresh.</span><span>Built to perform.</span><span>Made to last fresh.</span><span>Built to perform.</span><span>Made to last fresh.</span></div></div>
+  <section class="band hero">
+    <div class="wrap split rv">
+      <div class="stack">
+        <p class="eyebrow red">Geurzakje voor sportschoenen</p>
+        <h2 class="megah" style="font-size:clamp(2.2rem,5.6vw,4.4rem)">Een zakje in de <span class="o">vorm van</span> een voet</h2>
+        <p class="lead">Stop het na het sporten in je schoen. De actieve kokoskool neemt geurstoffen op, zodat je schoenen niet meer ruiken naar je laatste training.</p>
+        <div class="row">
+          <a class="btn" href="#product">Bekijk het product</a>
+          <a class="btn ghost" href="#over">Waarom Karbn</a>
+        </div>
+      </div>
+      <figure class="pic r-45"><img src="img/hero-4x5.jpg" alt="Getekende weergave van het olijfgroene Karbn-zakje met zwart lipje aan de hiel"><figcaption>Getekende placeholder</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="band" style="padding-top:0"><div class="wrap facts rv">
+    <div><i>01</i><b>Voetvorm</b><span>Past in elke sportschoen.</span></div>
+    <div><i>02</i><b>Kokoskool</b><span>Actieve kool van kokosschil.</span></div>
+    <div><i>03</i><b>Katoen</b><span>Een zakje van stof.</span></div>
+    <div><i>04</i><b>Per twee</b><span>Eén voor elke schoen.</span></div>
+  </div></section>
+
+  <section class="band dark">
+    <div class="wrap stack rv">
+      <p class="eyebrow">Het probleem</p>
+      <p class="quote bigq" style="max-width:24ch">"Ik vind het wel gênant als mensen het ruiken."<small>Hobbysporter, uit onze klantinterviews</small></p>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap rv">
+      <p class="eyebrow red">Voor hobbysporters</p>
+      <h2 class="megah" style="font-size:clamp(2rem,5.6vw,4.4rem)">Voor iedereen <span class="o">die sport,</span> hoe vaak ook</h2>
+      <div class="cards sports">
+        <figure class="pic r-43"><img src="img/sport-run.svg" alt="Getekende hardloper met een rode polsband"><figcaption>Getekende illustratie</figcaption></figure>
+        <figure class="pic r-43"><img src="img/sport-lift.svg" alt="Getekende sporter die in een sportschool een halter tilt"><figcaption>Getekende illustratie</figcaption></figure>
+        <figure class="pic r-43"><img src="img/sport-bench.svg" alt="Getekende sporter in een kleedkamer die zijn schoen dichtknoopt, met een Karbn-zakje in de tas"><figcaption>Getekende illustratie</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="band pin">
+    <div class="wrap pinwrap" id="pinwrap">
+      <div class="pinstick"><svg id="stage" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animatie: het zakje gaat in een schoen, de actieve kool neemt geurmoleculen op en twee zakjes gaan in de tote"></svg></div>
+      <div class="pinsteps">
+        <div class="pintitle"><p class="eyebrow red">Zo werkt het</p><h2>Drie handelingen, geen gedoe</h2><p>Scroll en kijk hoe Karbn werkt.</p></div>
+        <div class="pstep"><span class="tag">Na het sporten</span><h3>Stop het zakje in je schoen</h3><p>De voetvorm past in de schoen, tot in de neus. Je hoeft niets af te stellen.</p></div>
+        <div class="pstep"><span class="tag">Tot de volgende keer</span><h3>De kool neemt geurstoffen op</h3><p>Actieve kokoskool heeft een groot oppervlak waar geurmoleculen zich aan hechten.</p></div>
+        <div class="pstep"><span class="tag">Onderweg</span><h3>Neem ze mee in de tote</h3><p>Je krijgt twee zakjes in een katoenen tas, ook handig voor in je sporttas.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band soft">
+    <div class="wrap split rv">
+      <figure class="pic r-32"><img src="img/kool-3x2.jpg" alt="Getekende weergave van stukjes actieve kokoskool naast het katoenen zakje"><figcaption>Getekende placeholder</figcaption></figure>
+      <div class="stack">
+        <p class="eyebrow red">Het materiaal</p>
+        <h2 class="megah" style="font-size:clamp(1.9rem,4.4vw,3.4rem)">Actieve kool van <span class="o">kokosschillen</span></h2>
+        <p>Kokosschil is een restproduct van de kokosnoot. Wij gebruiken het als basis voor actieve kool, dat al lang geuren uit lucht haalt. Werkt het best in een droge schoen.</p>
+        <a class="btn ghost" href="#product" style="align-self:flex-start">Alles over het zakje</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap split rv">
+      <div class="stack">
+        <p class="eyebrow red">Per twee, in een tote</p>
+        <h2 class="megah" style="font-size:clamp(2rem,5vw,4rem)">Voor beide <span class="o">schoenen</span></h2>
+        <p>Karbn wordt verkocht per twee zakjes, in een katoenen tote. Eén voor elke schoen.</p>
+        <p class="price"><span class="todo">Prijs volgt</span></p>
+        <a class="btn" href="#product">Naar het product</a>
+      </div>
+      <figure class="pic r-43"><img src="img/tote-4x3.svg" alt="Getekende illustratie van de katoenen tote met twee Karbn-zakjes en een flyer"><figcaption>Getekende placeholder</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="band dark cta">
+    <div class="wrap rv">
+      <p class="eyebrow">Pre-sale</p>
+      <h2 class="megah">Fris na elke<br><span class="o">training.</span></h2>
+      <div class="row"><a class="btn" href="#product">Pre-order</a></div>
+    </div>
+  </section>
+</div>
+
+<!-- PRODUCT -->
+<div data-page="product">
+  <section class="band">
+    <div class="wrap split" style="align-items:start">
+      <div class="stack sticky">
+        <figure class="pic r-11"><img src="img/product-1x1.jpg" alt="Getekende weergave van het Karbn-zakje"><figcaption>Getekende placeholder</figcaption></figure>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <figure class="pic sm r-11"><img src="img/katoen-1x1.jpg" alt="Getekende weergave van het katoenen weefsel"></figure><figure class="pic sm r-11"><img src="img/kool-1x1.jpg" alt="Getekende weergave van actieve kokoskool"></figure><figure class="pic sm r-11"><img src="img/overzicht-1x1.jpg" alt="Getekende weergave van zakje en kokoskool"></figure>
+        </div>
+      </div>
+      <div class="stack">
+        <p class="eyebrow red">Karbn geurzakje</p>
+        <h1 class="megah" style="font-size:clamp(2.4rem,6vw,4.6rem)">Karbn,<br><span class="o">per twee</span><br>in een tote</h1>
+        <p class="lead">Een zakje in de vorm van een voet, gevuld met actieve kokoskool, in olijfgroen katoen met een zwart lipje aan de hiel.</p>
+        <p class="price"><span class="todo">Prijs volgt</span></p>
+        <div class="row">
+          <a class="btn" id="buy" href="https://forms.gle/8eRw9348djQGSfF49" target="_blank" rel="noopener">Pre-order</a>
+        </div>
+        <p id="buynote" style="font-size:15px">Pre-sale via formulier. Online betalen volgt later.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" style="padding-top:0"><div class="wrap facts rv">
+    <div><i>01</i><b>Voetvorm</b><span>Past in elke sportschoen.</span></div>
+    <div><i>02</i><b>Kokoskool</b><span>Actieve kool van kokosschil.</span></div>
+    <div><i>03</i><b>Katoen</b><span>Een zakje van stof, geen plastic.</span></div>
+    <div><i>04</i><b>Per twee</b><span>Eén voor elke schoen, in een tote.</span></div>
+  </div></section>
+
+  <section class="band soft">
+    <div class="wrap">
+      <p class="eyebrow red">Gebruik</p>
+      <h2>Zo gebruik je Karbn</h2>
+      <div class="cards">
+        <div class="stack"><h3>1. Na het sporten</h3><p>Haal je voeten uit de schoenen en stop in elke schoen één zakje.</p></div>
+        <div class="stack"><h3>2. Laat het zitten</h3><p>Laat het zakje in de schoen tot je weer gaat sporten. Haal het er dan uit.</p></div>
+        <div class="stack"><h3>3. Bewaar het droog</h3><p>Bewaar ze tussen gebruik door droog, bijvoorbeeld in de tote.</p></div>
+      </div>
+      <p style="margin-top:28px">Hoe lang een zakje meegaat: <span class="todo">invullen na de testronde</span></p>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap stack">
+      <p class="eyebrow red">Specificaties</p>
+      <h2>De details</h2>
+      <div class="scroll">
+        <table>
+          <tr><th>Onderdeel</th><th>Gegevens</th></tr>
+          <tr><td>Vulling</td><td>Actieve kool van kokosschil</td></tr>
+          <tr><td>Buitenzijde</td><td><span class="todo">Stofsoort invullen</span></td></tr>
+          <tr><td>Afmetingen</td><td><span class="todo">Invullen na productie van het eerste prototype</span></td></tr>
+          <tr><td>Inhoud verpakking</td><td>2 zakjes in een katoenen tote</td></tr>
+          <tr><td>Productie</td><td><span class="todo">Plaats invullen, pas noemen als het klopt</span></td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+  <section class="band">
+    <div class="wrap rv">
+      <p class="eyebrow red">Vragen</p>
+      <h2 style="margin-bottom:28px">Goed om te weten</h2>
+      <details class="q"><summary>Hoe lang gaat een zakje mee?</summary><p><span class="todo">Invullen na de testronde.</span></p></details>
+      <details class="q"><summary>Kan ik het zakje wassen?</summary><p><span class="todo">Invullen na overleg met de producent.</span></p></details>
+      <details class="q"><summary>Waarom moet het droog?</summary><p>Vocht verlaagt de opnamecapaciteit van actieve kool.</p></details>
+      <details class="q"><summary>Waarom per twee?</summary><p>Eén zakje voor elke schoen, samen in een katoenen tote.</p></details>
+    </div>
+  </section>
+
+  <section class="band dark cta">
+    <div class="wrap rv">
+      <p class="eyebrow">Pre-sale</p>
+      <h2 class="megah">Als eerste<br><span class="o">een Karbn?</span></h2>
+      <div class="row"><a class="btn" href="https://forms.gle/8eRw9348djQGSfF49" target="_blank" rel="noopener">Pre-order</a></div>
+    </div>
+  </section>
+</div>
+
+<!-- OVER -->
+<div data-page="over">
+  <section class="band dark">
+    <div class="wrap stack">
+      <p class="eyebrow">Over Karbn</p>
+      <h1 class="megah" style="font-size:clamp(2.2rem,7vw,5.6rem)">Schoenen die <span class="o">niet verraden</span> hoe hard je hebt getraind</h1>
+      <p class="lead">Een studentenbedrijf uit Haarlem. Een geurzakje voor hobbysporters die willen dat hun schoenen fris blijven.</p>
+      <figure class="pic r-32" style="max-width:760px"><img src="img/sport-bench.svg" alt="Getekende sporter in een kleedkamer met een Karbn-zakje in de tas"><figcaption>Getekende illustratie</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap rv">
+      <p class="eyebrow red">Manifest</p>
+      <p class="bigq">Fris na elke training. <em>Zonder</em> gedoe, zonder sprays.</p>
+      <div class="stripe">
+        <figure class="pic r-32"><img src="img/kool-3x2.jpg" alt="Getekende weergave van actieve kokoskool"><figcaption>Getekende placeholder</figcaption></figure>
+        <figure class="pic r-11"><img src="img/katoen-1x1.jpg" alt="Getekende weergave van katoen"></figure>
+        <figure class="pic r-11"><img src="img/overzicht-1x1.jpg" alt="Getekende weergave van het zakje"></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" style="padding-top:0"><div class="wrap facts rv">
+    <div><i>HAARLEM</i><b>Studentenbedrijf</b><span>Hogeschool Inholland.</span></div>
+    <div><i>MINOR</i><b>Create Your Start-Up</b><span>Ondernemen.</span></div>
+    <div><i>DOELGROEP</i><b>Hobbysporters</b><span>Wie sport, heeft schoenen die ruiken.</span></div>
+    <div><i>PRODUCT</i><b>Geurzakje</b><span>Actieve kool in een voetvorm.</span></div>
+  </div></section>
+
+  <section class="band">
+    <div class="wrap">
+      <p class="eyebrow red">Waarom en hoe</p>
+      <h2>Ons verhaal in twee stappen</h2>
+      <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+        <div class="stack"><h3>Waarom</h3><p><span class="todo">Why-tekst uit Bijlage B hier plaatsen, zonder claims die we niet kunnen onderbouwen.</span></p></div>
+        <div class="stack"><h3>Hoe en wat</h3><p>Een geurzakje voor sportschoenen: actieve kokoskool in een voetvorm, per twee in een katoenen tote.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band soft">
+    <div class="wrap">
+      <p class="eyebrow red">Het team</p>
+      <h2>Wie zit erachter</h2>
+      <div class="cards">
+        <div class="stack"><div class="ph r-11"><b>Foto volgt</b></div><h3>Melanie van Leeuwen</h3><p>Product manager</p></div>
+        <div class="stack"><div class="ph r-11"><b>Foto volgt</b></div><h3><span class="todo">Naam</span></h3><p><span class="todo">Rol</span></p></div>
+        <div class="stack"><div class="ph r-11"><b>Foto volgt</b></div><h3><span class="todo">Naam</span></h3><p><span class="todo">Rol</span></p></div>
+      </div>
+      <p style="margin-top:28px">Karbn is opgezet binnen de minor Ondernemen: Create Your Start-Up, Hogeschool Inholland Haarlem.</p>
+    </div>
+  </section>
+</div>
+
+<!-- CONTACT -->
+<div data-page="contact">
+  <section class="band dark" style="padding-block:clamp(48px,8vw,110px)">
+    <div class="wrap split" style="align-items:start">
+      <div class="stack rv">
+        <p class="eyebrow">Contact</p>
+        <h1 class="megah" style="font-size:clamp(2.6rem,8vw,6.4rem)">Zeg<br><span class="o">hallo.</span></h1>
+        <p class="lead">Een vraag, een idee of een pre-order? Stuur ons een bericht of volg ons op Instagram.</p>
+        <ul class="list">
+          <li>Instagram: <a href="https://www.instagram.com/karbn.nl" target="_blank" rel="noopener noreferrer">@karbn.nl</a></li>
+          <li>E-mail: <span class="todo">adres invullen</span></li>
+          <li>Pre-order: <a href="https://forms.gle/8eRw9348djQGSfF49" target="_blank" rel="noopener">via het formulier</a></li>
+        </ul>
+      </div>
+      <form id="cf" class="formcard rv" novalidate>
+        <div class="field"><label for="n">Naam</label><input id="n" type="text" autocomplete="name"></div>
+        <div class="field"><label for="e">E-mailadres</label><input id="e" type="email" autocomplete="email"></div>
+        <div class="field"><label for="m">Bericht</label><textarea id="m" rows="5"></textarea></div>
+        <button class="btn" type="submit">Verstuur</button>
+        <p id="cfnote" style="margin-top:14px;font-size:15px" role="status"></p>
+      </form>
+    </div>
+  </section>
+</div>
+
+<!-- INTERN -->
+<div data-page="intern">
+  <section class="band">
+    <div class="wrap stack">
+      <p class="eyebrow red">Alleen voor het team</p>
+      <h1 style="font-size:clamp(1.8rem,4.5vw,2.8rem)">Wat nog vervangen moet worden</h1>
+      <p>Deze pagina verdwijnt in de echte site. Vervang alles vóór het Mollie-verzoek, rond 23 november.</p>
+      <div class="scroll">
+        <table>
+          <tr><th>Wat</th><th>Waar</th><th>Opmerking</th></tr>
+          <tr><td>Draaivideo van het zakje</td><td>Home (hero)</td><td>Nu een 3D-weergave van het ontwerp (6 seconden). Vervang door een video van het echte zakje, 8 tot 12 seconden, zonder geluid.</td></tr>
+          <tr><td>Alle foto's</td><td>Home, Product, Team</td><td>Nu getekende placeholders (3D-weergave en illustratie). Vervang door eigen foto's. Foto's uit het brandbook mogen niet blijven staan.</td></tr>
+          <tr><td>Prijs</td><td>Home, Product</td><td>Pas invullen na de definitieve kostprijs.</td></tr>
+          <tr><td>Why-tekst</td><td>Over Karbn</td><td>Uit Bijlage B. Geen vage groene claims.</td></tr>
+          <tr><td>Stof, afmetingen, productieplaats</td><td>Product</td><td>Pas noemen als het klopt. "Geproduceerd in Europa" pas bij bewijs.</td></tr>
+          <tr><td>Levensduur</td><td>Product</td><td>Uit de testronde.</td></tr>
+          <tr><td>Teamnamen en rollen</td><td>Over Karbn</td><td></td></tr>
+          <tr><td>E-mailadres</td><td>Contact</td><td></td></tr>
+          <tr><td>Lettertypen</td><td>Hele site</td><td>Nu Krona One en Josefin Sans. Controleer de licentie van Horizon en Glacial Indifference.</td></tr>
+          <tr><td>Juridische pagina's</td><td>Nieuw</td><td>Privacyverklaring, algemene voorwaarden, retourbeleid, KvK of studentenbedrijf-gegevens.</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="logo" href="#home">KARB<span>N</span></a>
+      <p class="tagline">Built to perform. Made to last fresh.</p>
+    </div>
+    <div>
+      <h3>Pagina's</h3>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#product">Product</a></li>
+        <li><a href="#over">Over Karbn</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Volg ons</h3>
+      <ul>
+        <li><a href="https://www.instagram.com/karbn.nl" target="_blank" rel="noopener noreferrer">Instagram @karbn.nl</a></li>
+        <li><a href="#intern">Placeholders (intern)</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="bigmark" aria-hidden="true">KARB<span>N</span></div>
+</footer>
+
+<script>
+(function () {
+  var pages = ["home", "product", "over", "contact", "intern"];
+  function show() {
+    var h = (location.hash || "").replace("#", "");
+    if (pages.indexOf(h) === -1) h = "home";
+    document.querySelectorAll("[data-page]").forEach(function (el) {
+      el.classList.toggle("on", el.getAttribute("data-page") === h);
+    });
+    document.querySelectorAll("nav a").forEach(function (a) {
+      if (a.getAttribute("data-nav") === h) a.setAttribute("aria-current", "page");
+      else a.removeAttribute("aria-current");
+    });
+    document.body.setAttribute("data-view", h);
+    window.scrollTo(0, 0);
+    onScroll();
+  }
+  function onScroll() {
+    document.documentElement.style.setProperty("--hh", document.querySelector("header").offsetHeight + "px");
+    var v = document.querySelector(".fullvid");
+    var limit = v ? v.offsetHeight - 80 : 0;
+    document.body.classList.toggle("navon", window.scrollY > limit);
+    scrub();
+  }
+  var sv = null;
+  function scrub() {
+    sv = sv || document.getElementById("scrub");
+    var wrap = document.getElementById("pinwrap");
+    if (!sv || !wrap || !sv.duration) return;
+    var r = wrap.getBoundingClientRect();
+    var span = Math.max(1, r.height - window.innerHeight * 0.6);
+    var p = Math.min(1, Math.max(0, (-r.top + window.innerHeight * 0.2) / span));
+    try { sv.currentTime = p * (sv.duration - 0.05); } catch (e) {}
+    var best = null, bd = 1e9, mid = window.innerHeight / 2;
+    document.querySelectorAll(".pstep").forEach(function (s) {
+      var b = s.getBoundingClientRect(), d = Math.abs((b.top + b.bottom) / 2 - mid);
+      if (d < bd) { bd = d; best = s; }
+      s.classList.remove("on");
+    });
+    if (best) best.classList.add("on");
+  }
+  (function () { var v0 = document.getElementById("scrub"); if (v0) v0.addEventListener("loadedmetadata", scrub); })();
+
+  /* Scroll-animatie: zakje, schoen, kool met geurmoleculen, tote */
+  var ST = null;
+  var FOOT = "M50 5 C70 5 80 25 78 55 C77 80 70 100 72 125 C74 150 70 195 48 195 C28 195 24 170 28 145 C31 120 24 100 22 70 C20 35 32 5 50 5 Z";
+  function clamp(x) { return Math.min(1, Math.max(0, x)); }
+  function E(x) { x = clamp(x); return x * x * (3 - 2 * x); }
+  function seg(p, a, b) { return clamp((p - a) / (b - a)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function rnd(seed) { var x = Math.sin(seed * 127.1 + 3.7) * 43758.5453; return x - Math.floor(x); }
+  function pouchMarkup(id) {
+    return '<g id="' + id + '"><g class="pk"><g transform="rotate(-90) translate(-50 -100)"><use href="#foot" fill="url(#wv)"/><use href="#foot" fill="#000" opacity=".08"/><use href="#foot" fill="none" stroke="#9a9d70" stroke-width="1.6" stroke-dasharray="4 3" transform="translate(50 100) scale(.88) translate(-50 -100)"/><rect x="44" y="190" width="13" height="32" rx="2" fill="#0c0c0c"/><rect x="47" y="209" width="7" height="3" fill="#cc0000"/></g></g></g>';
+  }
+  function buildStage() {
+    var svg = document.getElementById("stage");
+    if (!svg) return null;
+    var gran = "", mols = "", targets = [], starts = [], i, j;
+    for (i = 0; i < 18; i++) {
+      var col = i % 6, row = Math.floor(i / 6);
+      var cx = 150 + col * 60 + (rnd(i + 1) - .5) * 16 + (row % 2) * 30;
+      var cy = 245 + row * 52 + (rnd(i + 30) - .5) * 10;
+      var r = 22 + rnd(i + 60) * 6, d = "";
+      for (j = 0; j < 8; j++) {
+        var an = j * Math.PI / 4 + rnd(i * 9 + j) * .4, rr = r * (.78 + .4 * rnd(i * 13 + j));
+        d += (j ? "L" : "M") + (cx + Math.cos(an) * rr).toFixed(1) + " " + (cy + Math.sin(an) * rr).toFixed(1);
+      }
+      gran += '<path d="' + d + 'Z" fill="#1b1b18" stroke="#3a3a34" stroke-width="2" stroke-linejoin="round"/>';
+      for (j = 0; j < 3; j++) gran += '<circle cx="' + (cx + (rnd(i * 5 + j) - .5) * r * 1.1).toFixed(1) + '" cy="' + (cy + (rnd(i * 7 + j) - .5) * r * 1.1).toFixed(1) + '" r="2.6" fill="#55554c"/>';
+      targets.push([cx + (rnd(i + 90) - .5) * 10, cy - r * .75]);
+      starts.push([60 + rnd(i + 120) * 480, 20 + rnd(i + 150) * 70]);
+    }
+    for (i = 0; i < 18; i++) mols += '<g class="mol"><path d="M0 0L10 -4M0 0L-9 5" stroke="#cc0000" stroke-width="1.6"/><circle r="7" fill="#cc0000"/><circle cx="10" cy="-4" r="4" fill="#e58a8a"/><circle cx="-9" cy="5" r="3.5" fill="#e58a8a"/></g>';
+    svg.innerHTML =
+      '<defs>' +
+      '<pattern id="wv" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#787b50"/><path d="M0 3H6M3 0V6" stroke="#6c6f48" stroke-width="1"/></pattern>' +
+      '<pattern id="wb" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#dccfae"/><path d="M0 3H6M3 0V6" stroke="#cfc19c" stroke-width="1"/></pattern>' +
+      '<path id="foot" d="' + FOOT + '"/>' +
+      '<filter id="blr" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8"/></filter>' +
+      '</defs>' +
+      '<g id="world">' +
+        '<g id="shoeBack" opacity="0"><path d="M330 268 C380 250 455 248 500 270 L490 292 C445 280 385 282 340 296 Z" fill="#2b2b26"/><ellipse cx="310" cy="440" rx="235" ry="12" fill="#000" opacity=".14" filter="url(#blr)"/></g>' +
+        '<g id="toteBack" opacity="0"><path d="M245 305 C245 215 355 215 355 305" fill="none" stroke="#bfae85" stroke-width="12" stroke-linecap="round"/><rect x="205" y="298" width="190" height="26" fill="#9c8c68"/><ellipse cx="300" cy="525" rx="130" ry="11" fill="#000" opacity=".14" filter="url(#blr)"/></g>' +
+        pouchMarkup("p1") + pouchMarkup("p2") +
+        '<g id="shoeFront" opacity="0"><path d="M96 402 C94 372 120 354 158 350 L238 346 C272 336 298 308 312 280 L338 270 C385 262 450 262 498 274 C512 300 516 350 516 402 Z" fill="#eceee4" stroke="#c4c7b6" stroke-width="3"/><rect x="92" y="398" width="428" height="32" rx="15" fill="#151515"/><path d="M250 330 l34 -22 M236 342 l40 -26 M262 322 l30 -20" stroke="#b9bcab" stroke-width="4" stroke-linecap="round"/><path d="M503 300 C510 330 512 360 512 392" fill="none" stroke="#cc0000" stroke-width="5" stroke-linecap="round"/></g>' +
+        '<g id="toteFront" opacity="0"><path d="M205 300 H395 L405 505 Q405 520 390 520 H210 Q195 520 195 505 Z" fill="url(#wb)"/><path d="M205 300 H395 L405 505 Q405 520 390 520 H210 Q195 520 195 505 Z" fill="#000" opacity=".06"/><rect x="205" y="300" width="190" height="9" fill="#bfae85"/><rect x="238" y="380" width="124" height="86" rx="8" fill="none" stroke="#bfae85" stroke-width="2.5" stroke-dasharray="8 6"/></g>' +
+      '</g>' +
+      '<g id="scene2" opacity="0">' +
+        '<rect x="60" y="150" width="480" height="300" rx="150" fill="url(#wv)" opacity=".30" stroke="#787b50" stroke-width="12"/>' +
+        '<rect x="96" y="184" width="408" height="232" rx="116" fill="#f5f2e7" stroke="#cfc9b3" stroke-width="3" stroke-dasharray="9 7"/>' +
+        gran + '<g id="mols">' + mols + '</g>' +
+      '</g>';
+    return { svg: svg, targets: targets, starts: starts,
+      world: svg.querySelector("#world"), shoeBack: svg.querySelector("#shoeBack"), shoeFront: svg.querySelector("#shoeFront"),
+      toteBack: svg.querySelector("#toteBack"), toteFront: svg.querySelector("#toteFront"),
+      p1: svg.querySelector("#p1"), p2: svg.querySelector("#p2"), scene2: svg.querySelector("#scene2"),
+      mols: svg.querySelectorAll("#mols .mol") };
+  }
+  function setPouch(g, x, y, rot, s, k, sx) {
+    g.setAttribute("transform", "translate(" + x.toFixed(1) + " " + y.toFixed(1) + ") rotate(" + rot.toFixed(1) + ") scale(" + (sx * s).toFixed(3) + " " + (k * s).toFixed(3) + ")");
+  }
+  function draw(p) {
+    var S = ST, x, y, rot, s, k, sx, i;
+    var early = p < .6;
+    var shoeOp = early ? E(seg(p, .22, .30)) : 0;
+    var toteOp = early ? 0 : E(seg(p, .74, .80));
+    S.shoeBack.setAttribute("opacity", shoeOp); S.shoeFront.setAttribute("opacity", shoeOp);
+    S.toteBack.setAttribute("opacity", toteOp); S.toteFront.setAttribute("opacity", toteOp);
+    var zs = early ? 1 + 6 * E(seg(p, .44, .52)) : 1;
+    S.world.setAttribute("transform", "translate(450 270) scale(" + zs.toFixed(3) + ") translate(-450 -270)");
+    S.world.setAttribute("opacity", early ? 1 - E(seg(p, .47, .52)) : E(seg(p, .74, .80)));
+    if (early) {
+      if (p < .22) {
+        x = 300; y = 300; rot = 0; s = 1.9; k = 1;
+        sx = Math.max(.3, Math.abs(Math.cos(p / .22 * Math.PI * 2)));
+      } else {
+        var a = E(seg(p, .22, .30)), d = E(seg(p, .30, .44));
+        k = lerp(1, .55, a); s = lerp(1.9, 1, a); rot = -40 * a; sx = 1;
+        x = lerp(300, 546, a) - d * 170 * .77; y = lerp(300, 191, a) + d * 170 * .64;
+      }
+    } else {
+      var u = E(seg(p, .78, .92)), rr = E(seg(p, .78, .86));
+      x = 300; y = lerp(110, 285, u); rot = lerp(-20, -75, rr); s = .8; k = .55; sx = 1;
+    }
+    setPouch(S.p1, x, y, rot, s, k, sx);
+    var v = E(seg(p, .82, 1)), iv = 1 - v;
+    setPouch(S.p2, iv * iv * 780 + 2 * iv * v * 520 + v * v * 338, iv * iv * -60 + 2 * iv * v * 40 + v * v * 285, lerp(-10, -72, v), .8, .55, 1);
+    var s2 = early ? E(seg(p, .46, .54)) : 0;
+    if (p >= .6) s2 = 1 - E(seg(p, .72, .78));
+    var sc = early ? .4 + .6 * E(seg(p, .46, .56)) : 1 - .5 * E(seg(p, .72, .78));
+    S.scene2.setAttribute("opacity", s2);
+    S.scene2.setAttribute("transform", "translate(300 300) scale(" + sc.toFixed(3) + ") translate(-300 -300)");
+    var w = seg(p, .52, .72);
+    for (i = 0; i < S.mols.length; i++) {
+      var m = E(seg(w, i * .035, i * .035 + .45));
+      var mx = lerp(S.starts[i][0], S.targets[i][0], m) + Math.sin(w * 14 + i) * 6 * (1 - m);
+      var my = lerp(S.starts[i][1], S.targets[i][1], m);
+      S.mols[i].setAttribute("transform", "translate(" + mx.toFixed(1) + " " + my.toFixed(1) + ") scale(" + (1 - .35 * m).toFixed(2) + ")");
+    }
+  }
+  function scrub() {
+    var wrap = document.getElementById("pinwrap");
+    if (!wrap) return;
+    if (!ST) ST = buildStage();
+    if (!ST) return;
+    var r = wrap.getBoundingClientRect();
+    var mid = window.innerHeight / 2;
+    if (window.innerWidth <= 760) { var ps = document.querySelector(".pinstick"); if (ps) mid = (ps.getBoundingClientRect().bottom + window.innerHeight) / 2; }
+    draw(clamp((mid - r.top) / r.height));
+    var best = null, bd = 1e9;
+    document.querySelectorAll(".pstep").forEach(function (s2) {
+      var b = s2.getBoundingClientRect(), dd = Math.abs((b.top + b.bottom) / 2 - mid);
+      if (dd < bd) { bd = dd; best = s2; }
+      s2.classList.remove("on");
+    });
+    if (best) best.classList.add("on");
+  }
+  scrub();
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  window.addEventListener("hashchange", show);
+  show();
+  document.getElementById("cf").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    document.getElementById("cfnote").textContent = "Dit is een prototype. Het formulier verstuurt nog niets.";
+  });
+})();
+</script>
+
+<script>
+(function(){try{
+if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+var root=document.documentElement;
+function check(){var h=innerHeight;document.querySelectorAll('.rv:not(.in)').forEach(function(e){var r=e.getBoundingClientRect();if(r.width&&r.top<h*.92)e.classList.add('in');});}
+root.classList.add('rvon');check();
+addEventListener('scroll',check,{passive:true});addEventListener('hashchange',function(){setTimeout(check,60);});addEventListener('resize',check);
+setInterval(check,400);
+}catch(x){}})();
+</script>
+
+<script>
+(function(){try{
+var EN={"Pre-order vanaf": "Pre-order from", "datum invullen": "fill in date", "Prototype voor het team en de docent. Foto's, prijs en bestelknop volgen. Geel gemarkeerde tekst moet nog worden ingevuld.": "Prototype for the team and teacher. Photos, price and order button to follow. Yellow-highlighted text still needs to be filled in.", "Geurzakje voor sportschoenen": "Odour pouch for sports shoes", "Een zakje in de": "A pouch in the", "vorm van": "shape of", "een voet": "a foot", "Stop het na het sporten in je schoen. De actieve kokoskool neemt geurstoffen op, zodat je schoenen niet meer ruiken naar je laatste training.": "Put it in your shoe after sport. The activated coconut carbon absorbs odour molecules, so your shoes stop smelling of your last workout.", "Bekijk het product": "View the product", "Waarom Karbn": "Why Karbn", "Getekende placeholder": "Drawn placeholder", "Voetvorm": "Foot shape", "Past in elke sportschoen.": "Fits any sports shoe.", "Kokoskool": "Coconut carbon", "Actieve kool van kokosschil.": "Activated carbon from coconut shell.", "Katoen": "Cotton", "Een zakje van stof.": "A pouch made of fabric.", "Per twee": "Per two", "Eén voor elke schoen.": "One for each shoe.", "Het probleem": "The problem", "\"Ik vind het wel gênant als mensen het ruiken.\"": "\"I find it quite embarrassing when people can smell it.\"", "Hobbysporter, uit onze klantinterviews": "Recreational athlete, from our customer interviews", "Voor hobbysporters": "For recreational athletes", "Voor iedereen": "For everyone", "die sport,": "who exercises,", "hoe vaak ook": "however often", "Getekende illustratie": "Drawn illustration", "Zo werkt het": "How it works", "Drie handelingen, geen gedoe": "Three steps, no hassle", "Scroll en kijk hoe Karbn werkt.": "Scroll and see how Karbn works.", "Na het sporten": "After sport", "Stop het zakje in je schoen": "Put the pouch in your shoe", "De voetvorm past in de schoen, tot in de neus. Je hoeft niets af te stellen.": "The foot shape fits the shoe, right up to the toe. Nothing to adjust.", "Tot de volgende keer": "Until next time", "De kool neemt geurstoffen op": "The carbon absorbs odour", "Actieve kokoskool heeft een groot oppervlak waar geurmoleculen zich aan hechten.": "Activated coconut carbon has a large surface that odour molecules attach to.", "Onderweg": "On the go", "Neem ze mee in de tote": "Take them along in the tote", "Je krijgt twee zakjes in een katoenen tas, ook handig voor in je sporttas.": "You get two pouches in a cotton bag, handy for your gym bag too.", "Het materiaal": "The material", "Actieve kool van": "Activated carbon from", "kokosschillen": "coconut shells", "Kokosschil is een restproduct van de kokosnoot. Wij gebruiken het als basis voor actieve kool, dat al lang geuren uit lucht haalt. Werkt het best in een droge schoen.": "Coconut shell is a by-product of the coconut. We use it as the base for activated carbon, which has long been used to remove odours from air. Works best in a dry shoe.", "Alles over het zakje": "Everything about the pouch", "Per twee, in een tote": "Per two, in a tote", "Voor beide": "For both", "schoenen": "shoes", "Karbn wordt verkocht per twee zakjes, in een katoenen tote. Eén voor elke schoen.": "Karbn is sold as two pouches in a cotton tote. One for each shoe.", "Prijs volgt": "Price to follow", "Naar het product": "To the product", "Fris na elke": "Fresh after every", "training.": "workout.", "Karbn geurzakje": "Karbn odour pouch", "per twee": "per two", "in een tote": "in a tote", "Een zakje in de vorm van een voet, gevuld met actieve kokoskool, in olijfgroen katoen met een zwart lipje aan de hiel.": "A foot-shaped pouch filled with activated coconut carbon, in olive-green cotton with a black loop tab at the heel.", "Pre-sale via formulier. Online betalen volgt later.": "Pre-sale via form. Online payment follows later.", "Een zakje van stof, geen plastic.": "A fabric pouch, no plastic.", "Eén voor elke schoen, in een tote.": "One for each shoe, in a tote.", "Gebruik": "Use", "Zo gebruik je Karbn": "How to use Karbn", "1. Na het sporten": "1. After sport", "Haal je voeten uit de schoenen en stop in elke schoen één zakje.": "Take your feet out of your shoes and put one pouch in each shoe.", "2. Laat het zitten": "2. Leave it in", "Laat het zakje in de schoen tot je weer gaat sporten. Haal het er dan uit.": "Leave the pouch in the shoe until you exercise again. Then take it out.", "3. Bewaar het droog": "3. Keep it dry", "Bewaar ze tussen gebruik door droog, bijvoorbeeld in de tote.": "Store them dry between uses, for example in the tote.", "Hoe lang een zakje meegaat:": "How long a pouch lasts:", "invullen na de testronde": "fill in after the test round", "Specificaties": "Specifications", "De details": "The details", "Onderdeel": "Item", "Gegevens": "Details", "Vulling": "Filling", "Actieve kool van kokosschil": "Activated carbon from coconut shell", "Buitenzijde": "Outer fabric", "Stofsoort invullen": "Fill in fabric type", "Afmetingen": "Dimensions", "Invullen na productie van het eerste prototype": "Fill in after the first prototype is made", "Inhoud verpakking": "Package contents", "2 zakjes in een katoenen tote": "2 pouches in a cotton tote", "Productie": "Production", "Plaats invullen, pas noemen als het klopt": "Fill in the place, only state it when it is true", "Vragen": "Questions", "Goed om te weten": "Good to know", "Hoe lang gaat een zakje mee?": "How long does a pouch last?", "Invullen na de testronde.": "Fill in after the test round.", "Kan ik het zakje wassen?": "Can I wash the pouch?", "Invullen na overleg met de producent.": "Fill in after talking to the producer.", "Waarom moet het droog?": "Why does it need to be dry?", "Vocht verlaagt de opnamecapaciteit van actieve kool.": "Moisture lowers the absorption capacity of activated carbon.", "Waarom per twee?": "Why per two?", "Eén zakje voor elke schoen, samen in een katoenen tote.": "One pouch for each shoe, together in a cotton tote.", "Als eerste": "Be the first", "een Karbn?": "to get a Karbn?", "Over Karbn": "About Karbn", "Schoenen die": "Shoes that", "niet verraden": "don't reveal", "hoe hard je hebt getraind": "how hard you trained", "Een studentenbedrijf uit Haarlem. Een geurzakje voor hobbysporters die willen dat hun schoenen fris blijven.": "A student company from Haarlem. An odour pouch for recreational athletes who want their shoes to stay fresh.", "Manifest": "Manifesto", "Fris na elke training.": "Fresh after every workout.", "Zonder": "Without", "gedoe, zonder sprays.": "hassle, without sprays.", "Studentenbedrijf": "Student company", "Hogeschool Inholland.": "Inholland University of Applied Sciences.", "Ondernemen.": "Entrepreneurship.", "DOELGROEP": "TARGET GROUP", "Hobbysporters": "Recreational athletes", "Wie sport, heeft schoenen die ruiken.": "Anyone who exercises has shoes that smell.", "Geurzakje": "Odour pouch", "Actieve kool in een voetvorm.": "Activated carbon in a foot shape.", "Waarom en hoe": "Why and how", "Ons verhaal in twee stappen": "Our story in two steps", "Waarom": "Why", "Why-tekst uit Bijlage B hier plaatsen, zonder claims die we niet kunnen onderbouwen.": "Place the Why text from Appendix B here, without claims we cannot support.", "Hoe en wat": "How and what", "Een geurzakje voor sportschoenen: actieve kokoskool in een voetvorm, per twee in een katoenen tote.": "An odour pouch for sports shoes: activated coconut carbon in a foot shape, two in a cotton tote.", "Het team": "The team", "Wie zit erachter": "Who is behind it", "Foto volgt": "Photo to follow", "Naam": "Name", "Rol": "Role", "Karbn is opgezet binnen de minor Ondernemen: Create Your Start-Up, Hogeschool Inholland Haarlem.": "Karbn was set up within the minor Entrepreneurship: Create Your Start-Up, Inholland University of Applied Sciences Haarlem.", "Zeg": "Say", "hallo.": "hello.", "Een vraag, een idee of een pre-order? Stuur ons een bericht of volg ons op Instagram.": "A question, an idea or a pre-order? Send us a message or follow us on Instagram.", "adres invullen": "fill in address", "via het formulier": "via the form", "E-mailadres": "Email address", "Bericht": "Message", "Verstuur": "Send", "Pagina's": "Pages", "Volg ons": "Follow us", "Placeholders (intern)": "Placeholders (internal)"};
+var ALT=[["Getekende weergave van het Karbn-zakje", "Drawn view of the Karbn pouch"], ["Getekende weergave van", "Drawn view of"], ["Getekende illustratie van", "Drawn illustration of"], ["Getekende hardloper met een rode polsband", "Drawn runner with a red wristband"], ["Getekende sporter", "Drawn athlete"]];
+var KEY='karbnlang',lang='nl',orig=new WeakMap(),origAttr=new WeakMap();
+var MSG={nl:"Dit is een prototype. Het formulier verstuurt nog niets.",en:"This is a prototype. The form does not send anything yet."};
+function walk(n,en){if(n.nodeType===3){var t=n.nodeValue;if(!t.trim())return;if(en){var k=t.trim();if(EN[k]!==undefined){if(!orig.has(n))orig.set(n,t);n.nodeValue=t.replace(k,EN[k]);}}else if(orig.has(n)){n.nodeValue=orig.get(n);orig.delete(n);}return;}
+if(n.nodeType!==1)return;var tag=n.tagName;if(tag==='SCRIPT'||tag==='STYLE'||tag==='SVG'||tag==='svg')return;if(n.closest&&n.closest('[data-page="intern"]'))return;
+if(tag==='IMG'||n.hasAttribute&&n.hasAttribute('aria-label')){['alt','aria-label'].forEach(function(a){var v=n.getAttribute(a);if(!v)return;var key=a+'|';if(en){if(!origAttr.has(n))origAttr.set(n,{});var o=origAttr.get(n);if(o[a]===undefined)o[a]=v;var r=o[a];ALT.forEach(function(p){if(r.indexOf(p[0])===0&&r===o[a]){}});for(var i=0;i<ALT.length;i++){if(r.indexOf(ALT[i][0])===0){r=ALT[i][1]+r.slice(ALT[i][0].length);break;}}n.setAttribute(a,r);}else if(origAttr.has(n)&&origAttr.get(n)[a]!==undefined){n.setAttribute(a,origAttr.get(n)[a]);}});}
+for(var c=n.firstChild;c;c=c.nextSibling)walk(c,en);}
+function apply(l){lang=l;document.documentElement.lang=l;walk(document.querySelector('header'),l==='en');document.querySelectorAll('[data-page]:not([data-page="intern"])').forEach(function(p){walk(p,l==='en');});walk(document.querySelector('footer'),l==='en');
+document.querySelectorAll('.langsw button').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-lang')===l?'true':'false');});
+try{localStorage.setItem(KEY,l);}catch(x){}
+var note=document.getElementById('cfnote');if(note&&note.textContent)note.textContent=MSG[l];}
+document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-lang]');if(t){e.preventDefault();e.stopPropagation();apply(t.getAttribute('data-lang'));}},true);
+var saved=null;try{saved=localStorage.getItem(KEY);}catch(x){}
+if(saved==='en')apply('en');
+window.karbnLang=function(){return lang;};
+var f=document.getElementById('cf');if(f)f.addEventListener('submit',function(){setTimeout(function(){var n=document.getElementById('cfnote');if(n)n.textContent=MSG[lang];},0);});
+}catch(x){}})();
+</script>
+
+<script>
+(function(){try{var n=document.getElementById('start');if(!n)return;n.addEventListener('click',function(){n.classList.toggle('open');});
+addEventListener('scroll',function(){if(n.classList.contains('open'))n.classList.remove('open');},{passive:true});}catch(x){}})();
+</script>
+
+<script>
+(function(){try{var v=document.getElementById('spin');if(!v)return;
+v.muted=true;v.defaultMuted=true;v.loop=true;v.setAttribute('muted','');v.setAttribute('playsinline','');
+function go(){if(v.paused&&v.offsetParent!==null){var p=v.play();if(p&&p.catch)p.catch(function(){});}}
+go();v.addEventListener('canplay',go);v.addEventListener('loadeddata',go);v.addEventListener('pause',function(){if(!document.hidden)setTimeout(go,150);});
+v.addEventListener('ended',function(){v.currentTime=0;go();});
+document.addEventListener('visibilitychange',function(){if(!document.hidden)go();});
+addEventListener('hashchange',function(){setTimeout(go,100);});addEventListener('pageshow',go);
+['touchstart','pointerdown','click','scroll','keydown'].forEach(function(ev){addEventListener(ev,go,{passive:true,capture:true});});
+setInterval(go,1500);
+}catch(x){}})();
+</script>
+
+</body>
+</html>

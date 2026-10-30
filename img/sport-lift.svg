@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" role="img" aria-label="Getekende sporter die in een donkere sportschool een halter boven het hoofd tilt"><defs>
+<filter id="relief" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+<feGaussianBlur in="SourceAlpha" stdDeviation="5" result="h"/>
+<feDiffuseLighting in="h" surfaceScale="9" diffuseConstant="1.15" lighting-color="#fff" result="l"><feDistantLight azimuth="235" elevation="38"/></feDiffuseLighting>
+<feComposite in="l" in2="SourceAlpha" operator="in" result="lm"/>
+<feBlend in="SourceGraphic" in2="lm" mode="multiply" result="m"/>
+<feComponentTransfer in="m"><feFuncR type="linear" slope="1.25" intercept="-.04"/><feFuncG type="linear" slope="1.25" intercept="-.04"/><feFuncB type="linear" slope="1.25" intercept="-.04"/></feComponentTransfer>
+</filter>
+<filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix type="saturate" values="0"/></filter>
+<radialGradient id="vig" cx=".5" cy=".45" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>
+<linearGradient id="hard" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>
+</defs><g style="filter:contrast(1.1)">
+<defs><radialGradient id="s" cx=".5" cy=".35" r=".7"><stop offset="0" stop-color="#3a3a3a"/><stop offset="1" stop-color="#0d0d0d"/></radialGradient></defs>
+<rect width="900" height="600" fill="url(#s)"/>
+<g stroke="#262626" stroke-width="3"><path d="M0 120H900M0 330H900"/><path d="M180 0V540M450 0V540M720 0V540"/></g>
+<rect y="540" width="900" height="60" fill="#080808"/><rect y="538" width="900" height="4" fill="#cc0000" opacity=".8"/>
+<ellipse cx="450" cy="545" rx="190" ry="10" fill="#000" opacity=".5"/>
+<g stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#relief)">
+ <!-- benen -->
+ <path d="M428 350 L420 432" stroke="#0b0b0b" stroke-width="44"/><path d="M472 350 L480 432" stroke="#0b0b0b" stroke-width="44"/>
+ <path d="M420 432 L414 512" stroke="#9a9a9a" stroke-width="26"/><path d="M480 432 L486 512" stroke="#9a9a9a" stroke-width="26"/>
+ <path d="M394 528 L436 528" stroke="#f4f4f4" stroke-width="22"/><path d="M464 528 L506 528" stroke="#f4f4f4" stroke-width="22"/>
+ <path d="M394 538 L436 538" stroke="#cc0000" stroke-width="5"/><path d="M464 538 L506 538" stroke="#cc0000" stroke-width="5"/>
+ <!-- romp -->
+ <path d="M450 222 L450 330" stroke="#ededed" stroke-width="104"/>
+ <path d="M408 222 Q450 240 492 222" stroke="#9a9a9a" stroke-width="10"/>
+ <!-- armen omhoog -->
+ <path d="M398 232 L352 172" stroke="#9a9a9a" stroke-width="26"/><path d="M352 172 L346 100" stroke="#9a9a9a" stroke-width="22"/>
+ <path d="M502 232 L548 172" stroke="#9a9a9a" stroke-width="26"/><path d="M548 172 L554 100" stroke="#9a9a9a" stroke-width="22"/>
+ <path d="M346 116 L346 98" stroke="#cc0000" stroke-width="14"/><path d="M554 116 L554 98" stroke="#cc0000" stroke-width="14"/>
+ <!-- halter -->
+ <path d="M150 88 H750" stroke="#c9c9c9" stroke-width="9"/>
+ <rect x="150" y="26" width="30" height="124" rx="6" fill="#1a1a1a" stroke="#555" stroke-width="3"/><rect x="186" y="42" width="22" height="92" rx="5" fill="#1a1a1a" stroke="#555" stroke-width="3"/>
+ <rect x="720" y="26" width="30" height="124" rx="6" fill="#1a1a1a" stroke="#555" stroke-width="3"/><rect x="692" y="42" width="22" height="92" rx="5" fill="#1a1a1a" stroke="#555" stroke-width="3"/>
+ <rect x="150" y="82" width="30" height="12" fill="#cc0000"/><rect x="720" y="82" width="30" height="12" fill="#cc0000"/>
+</g>
+<circle cx="450" cy="170" r="31" fill="#9a9a9a"/><path d="M420 160 Q450 132 482 160" stroke="#0b0b0b" stroke-width="12" fill="none" stroke-linecap="round"/>
+</g><rect width="900" height="600" fill="url(#hard)"/><rect width="900" height="600" fill="url(#vig)"/><rect width="900" height="600" filter="url(#grain)" opacity=".16" style="mix-blend-mode:overlay"/></svg>

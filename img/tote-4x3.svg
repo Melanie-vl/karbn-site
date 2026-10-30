@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Getekende illustratie: katoenen tote met twee Karbn-zakjes en een flyer">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eef0e4"/><stop offset="1" stop-color="#d9dcc8"/></linearGradient>
+<pattern id="weave" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#787b50"/><path d="M0 3H6M3 0V6" stroke="#6c6f48" stroke-width="1"/></pattern>
+<filter id="blur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="9"/></filter>
+<path id="foot" d="M50 5 C70 5 80 25 78 55 C77 80 70 100 72 125 C74 150 70 195 48 195 C28 195 24 170 28 145 C31 120 24 100 22 70 C20 35 32 5 50 5 Z"/>
+</defs>
+<rect width="800" height="600" fill="url(#bg)"/>
+<ellipse cx="300" cy="530" rx="190" ry="20" fill="#000" opacity=".18" filter="url(#blur)"/>
+<ellipse cx="590" cy="545" rx="150" ry="16" fill="#000" opacity=".16" filter="url(#blur)"/>
+<!-- flyer -->
+<g transform="rotate(7 330 200)"><rect x="285" y="95" width="105" height="150" rx="4" fill="#fff" stroke="#d3d5c6"/><rect x="299" y="112" width="60" height="8" fill="#cc0000"/><g stroke="#cfd1c2" stroke-width="3"><path d="M299 140H375M299 156H375M299 172H345"/></g></g>
+<!-- tote -->
+<path d="M205 190 C205 70 395 70 395 190" fill="none" stroke="#5f6240" stroke-width="16" stroke-linecap="round"/>
+<path d="M150 185 H450 L470 520 Q470 535 455 535 H145 Q130 535 130 520 Z" fill="url(#weave)"/>
+<path d="M150 185 H450 L470 520 Q470 535 455 535 H145 Q130 535 130 520 Z" fill="#000" opacity=".10"/>
+<path d="M150 185 H450" stroke="#5f6240" stroke-width="10"/>
+<rect x="215" y="300" width="170" height="120" rx="10" fill="none" stroke="#9a9d70" stroke-width="3" stroke-dasharray="10 8"/>
+<!-- pouch 1 -->
+<g transform="translate(530 290) rotate(18) scale(1.1)">
+ <use href="#foot" fill="url(#weave)"/><use href="#foot" fill="#000" opacity=".08"/>
+ <use href="#foot" fill="none" stroke="#9a9d70" stroke-width="1.6" stroke-dasharray="4 3" transform="translate(50 100) scale(.88) translate(-50 -100)"/>
+ <rect x="44" y="190" width="13" height="30" rx="2" fill="#0c0c0c"/><rect x="47" y="208" width="7" height="3" fill="#cc0000"/>
+</g>
+<!-- pouch 2 -->
+<g transform="translate(655 215) rotate(-8) scale(1.1)">
+ <use href="#foot" fill="url(#weave)"/><use href="#foot" fill="#000" opacity=".08"/>
+ <use href="#foot" fill="none" stroke="#9a9d70" stroke-width="1.6" stroke-dasharray="4 3" transform="translate(50 100) scale(.88) translate(-50 -100)"/>
+ <rect x="44" y="190" width="13" height="30" rx="2" fill="#0c0c0c"/><rect x="47" y="208" width="7" height="3" fill="#cc0000"/>
+</g>
+<!-- kool -->
+<g fill="#161616"><circle cx="615" cy="535" r="12"/><circle cx="640" cy="545" r="8"/><circle cx="590" cy="548" r="7"/><circle cx="662" cy="530" r="6"/></g>
+</svg>
